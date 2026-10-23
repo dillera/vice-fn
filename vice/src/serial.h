@@ -31,7 +31,8 @@
 
 #include "types.h"
 
-#define SERIAL_MAXDEVICES 16
+/* units 0-30, the whole IEC range; 31 addresses UNLISTEN/UNTALK */
+#define SERIAL_MAXDEVICES 31
 
 #define SERIAL_DEVICE_NONE 0
 #define SERIAL_DEVICE_FS   1 /* filesystem */
@@ -94,6 +95,9 @@ void serial_trap_truedrive_set(unsigned int unit, unsigned int flag);
 
 int serial_realdevice_enable(void);
 void serial_realdevice_disable(void);
+int serial_realdevice_resources_init(void);
+int serial_realdevice_cmdline_options_init(void);
+void serial_realdevice_late_init(void);
 
 int serial_iec_lib_directory(unsigned int unit, const char *pattern, uint8_t **buf);
 int serial_iec_lib_read_sector(unsigned int unit, unsigned int track, unsigned int sector, uint8_t *buf);

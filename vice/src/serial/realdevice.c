@@ -60,10 +60,10 @@ void realdevice_open(unsigned int device, uint8_t secondary, void (*st_func)(uin
 
 #ifdef DEBUG_RD
     log_debug(LOG_DEFAULT, "realdevice: OPEN FD:%p DEVICE:%u SECONDARY:%i",
-        (void*)realdevice_fd, device & 0x0f, secondary & 0x0f);
+        (void*)realdevice_fd, device & 0x1f, secondary & 0x0f);
 #endif
     assert(opencbmlib.p_cbm_open != NULL);
-    (*opencbmlib.p_cbm_open)(realdevice_fd, (uint8_t)(device & 0x0f),
+    (*opencbmlib.p_cbm_open)(realdevice_fd, (uint8_t)(device & 0x1f),
                              (uint8_t)(secondary & 0x0f),
                              NULL, 0);
 }
@@ -74,11 +74,11 @@ void realdevice_close(unsigned int device, uint8_t secondary, void (*st_func)(ui
 
 #ifdef DEBUG_RD
     log_debug(LOG_DEFAULT, "realdevice: CLOSE FD:%p DEVICE:%u SECONDARY:%i",
-        (void*)realdevice_fd, device & 0x0f, secondary & 0x0f);
+        (void*)realdevice_fd, device & 0x1f, secondary & 0x0f);
 #endif
     assert(opencbmlib.p_cbm_close != NULL);
     assert(realdevice_fd != NULL);
-    (*opencbmlib.p_cbm_close)(realdevice_fd, (uint8_t)(device & 0x0f),
+    (*opencbmlib.p_cbm_close)(realdevice_fd, (uint8_t)(device & 0x1f),
                               (uint8_t)(secondary & 0x0f));
 }
 
@@ -88,11 +88,11 @@ void realdevice_listen(unsigned int device, uint8_t secondary, void (*st_func)(u
 
 #ifdef DEBUG_RD
     log_debug(LOG_DEFAULT, "realdevice: LISTEN FD:%p DEVICE:%u SECONDARY:%i",
-        (void*)realdevice_fd, device & 0x0f, secondary & 0x0f);
+        (void*)realdevice_fd, device & 0x1f, secondary & 0x0f);
 #endif
     assert(opencbmlib.p_cbm_listen != NULL);
     assert(realdevice_fd != NULL);
-    (*opencbmlib.p_cbm_listen)(realdevice_fd, (uint8_t)(device & 0x0f),
+    (*opencbmlib.p_cbm_listen)(realdevice_fd, (uint8_t)(device & 0x1f),
                                (uint8_t)(secondary & 0x0f));
 }
 
@@ -102,11 +102,11 @@ void realdevice_talk(unsigned int device, uint8_t secondary, void (*st_func)(uin
 
 #ifdef DEBUG_RD
     log_debug(LOG_DEFAULT, "realdevice: TALK FD:%p DEVICE:%u SECONDARY:%i",
-        (void*)realdevice_fd, device & 0x0f, secondary & 0x0f);
+        (void*)realdevice_fd, device & 0x1f, secondary & 0x0f);
 #endif
     assert(opencbmlib.p_cbm_talk != NULL);
     assert(realdevice_fd != NULL);
-    (*opencbmlib.p_cbm_talk)(realdevice_fd, (uint8_t)(device & 0x0f),
+    (*opencbmlib.p_cbm_talk)(realdevice_fd, (uint8_t)(device & 0x1f),
                              (uint8_t)(secondary & 0x0f));
 }
 

@@ -73,7 +73,7 @@ static int trapsready = 0;
 /* Flag: Should we avoid installing traps at all?  */
 static int traps_enabled = 0;
 
-#define MAX_DEVICES 15  /* FIXME: is there another constant we can use instead? */
+#define MAX_DEVICES TRAPS_MAX_DEVICES
 int traps_enabled_device[MAX_DEVICES];
 
 static int set_traps_status(int enabled)
@@ -113,14 +113,13 @@ static int set_traps_status(int enabled)
     return res;
 }
 
-static int set_traps_enabled(int val, void *param)
+/* set the flag of one unit, then install or remove the traps for all of them */
+static int update_traps_enabled(unsigned int unit, int val, unsigned int *enabled_out)
 {
     unsigned int enabled = 0;
-    unsigned int unit = vice_ptr_to_int(param);
     unsigned int i;
     int res = 0;
 
-    DBG(("set_traps_enabled %d device: %u", val, unit));
     traps_enabled_device[unit] = val ? 1 : 0;
 
     /* check all devices, enable traps if any of them is enabled */
@@ -138,8 +137,33 @@ static int set_traps_enabled(int val, void *param)
         res = -1;
     }
 
+    *enabled_out = enabled;
+    return res;
+}
+
+static int set_traps_enabled(int val, void *param)
+{
+    unsigned int enabled;
+    unsigned int unit = vice_ptr_to_int(param);
+    int res;
+
+    DBG(("set_traps_enabled %d device: %u", val, unit));
+    res = update_traps_enabled(unit, val, &enabled);
+
     machine_bus_status_trapdevices_set(unit, enabled);
     return res;
+}
+
+/* For units without a TrapDeviceN resource, which also have no IEC bus slot */
+int traps_device_enable(unsigned int unit, int enable)
+{
+    unsigned int enabled;
+
+    if (unit >= MAX_DEVICES) {
+        return -1;
+    }
+    DBG(("traps_device_enable %d device: %u", enable, unit));
+    return update_traps_enabled(unit, enable, &enabled);
 }
 
 static resource_int_t resources_int[] = {

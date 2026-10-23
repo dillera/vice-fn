@@ -45,7 +45,7 @@ void serial_iec_bus_open(unsigned int device, uint8_t secondary, void (*st_func)
 {
     DBG(("serial_iec_bus_open device: 0x%2x secondary: 0x%02x", device, secondary));
 #ifdef HAVE_REALDEVICE
-    if (serial_device_type_get(device & 0x0f) == SERIAL_DEVICE_REAL) {
+    if (serial_device_type_get(device & 0x1f) == SERIAL_DEVICE_REAL) {
         realdevice_open(device, secondary, st_func);
     } else
 #endif
@@ -55,7 +55,7 @@ void serial_iec_bus_open(unsigned int device, uint8_t secondary, void (*st_func)
 void serial_iec_bus_close(unsigned int device, uint8_t secondary, void (*st_func)(uint8_t))
 {
 #ifdef HAVE_REALDEVICE
-    if (serial_device_type_get(device & 0x0f) == SERIAL_DEVICE_REAL) {
+    if (serial_device_type_get(device & 0x1f) == SERIAL_DEVICE_REAL) {
         realdevice_close(device, secondary, st_func);
     } else
 #endif
@@ -65,7 +65,7 @@ void serial_iec_bus_close(unsigned int device, uint8_t secondary, void (*st_func
 void serial_iec_bus_listen(unsigned int device, uint8_t secondary, void (*st_func)(uint8_t))
 {
 #ifdef HAVE_REALDEVICE
-    if (serial_device_type_get(device & 0x0f) == SERIAL_DEVICE_REAL) {
+    if (serial_device_type_get(device & 0x1f) == SERIAL_DEVICE_REAL) {
         realdevice_listen(device, secondary, st_func);
     } else
 #endif
@@ -75,7 +75,7 @@ void serial_iec_bus_listen(unsigned int device, uint8_t secondary, void (*st_fun
 void serial_iec_bus_talk(unsigned int device, uint8_t secondary, void (*st_func)(uint8_t))
 {
 #ifdef HAVE_REALDEVICE
-    if (serial_device_type_get(device & 0x0f) == SERIAL_DEVICE_REAL) {
+    if (serial_device_type_get(device & 0x1f) == SERIAL_DEVICE_REAL) {
         realdevice_talk(device, secondary, st_func);
     } else
 #endif
@@ -85,7 +85,7 @@ void serial_iec_bus_talk(unsigned int device, uint8_t secondary, void (*st_func)
 void serial_iec_bus_unlisten(unsigned int device, uint8_t secondary, void (*st_func)(uint8_t))
 {
 #ifdef HAVE_REALDEVICE
-    if (serial_device_type_get(device & 0x0f) == SERIAL_DEVICE_REAL) {
+    if (serial_device_type_get(device & 0x1f) == SERIAL_DEVICE_REAL) {
         realdevice_unlisten(st_func);
     } else
 #endif
@@ -95,7 +95,7 @@ void serial_iec_bus_unlisten(unsigned int device, uint8_t secondary, void (*st_f
 void serial_iec_bus_untalk(unsigned int device, uint8_t secondary, void (*st_func)(uint8_t))
 {
 #ifdef HAVE_REALDEVICE
-    if (serial_device_type_get(device & 0x0f) == SERIAL_DEVICE_REAL) {
+    if (serial_device_type_get(device & 0x1f) == SERIAL_DEVICE_REAL) {
         realdevice_untalk(st_func);
     } else
 #endif
@@ -106,7 +106,7 @@ void serial_iec_bus_write(unsigned int device, uint8_t secondary, uint8_t data, 
 {
     DBG(("serial_iec_bus_write device: 0x%2x secondary: 0x%02x data: 0x%02x", device, secondary, data));
 #ifdef HAVE_REALDEVICE
-    if (serial_device_type_get(device & 0x0f) == SERIAL_DEVICE_REAL) {
+    if (serial_device_type_get(device & 0x1f) == SERIAL_DEVICE_REAL) {
         realdevice_write(data, st_func);
     } else
 #endif
@@ -116,7 +116,7 @@ void serial_iec_bus_write(unsigned int device, uint8_t secondary, uint8_t data, 
 uint8_t serial_iec_bus_read(unsigned int device, uint8_t secondary, void (*st_func)(uint8_t))
 {
 #ifdef HAVE_REALDEVICE
-    if (serial_device_type_get(device & 0x0f) == SERIAL_DEVICE_REAL) {
+    if (serial_device_type_get(device & 0x1f) == SERIAL_DEVICE_REAL) {
         return realdevice_read(st_func);
     } else
 #endif
@@ -137,4 +137,5 @@ void serial_iec_bus_init(void)
 #ifdef HAVE_REALDEVICE
     realdevice_init();
 #endif
+    serial_realdevice_late_init();
 }

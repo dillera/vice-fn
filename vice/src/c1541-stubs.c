@@ -45,6 +45,7 @@
 #include "network.h"
 #include "serial.h"
 #include "tape.h"
+#include "traps.h"
 #include "vdrive.h"
 #include "vice-event.h"
 #include "vsync.h"
@@ -242,6 +243,11 @@ void ui_error_string(const char *text)
 
 void vsync_suspend_speed_eval(void)
 {
+}
+
+int traps_device_enable(unsigned int unit, int enable)
+{
+    return 0;
 }
 
 struct image_contents_s *machine_diskcontents_bus_read(unsigned int unit)

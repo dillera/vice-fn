@@ -38,6 +38,7 @@
 #include "serial-iec-device.h"
 #include "serial-trap.h"
 #include "serial.h"
+#include "traps.h"
 #include "types.h"
 
 #ifdef DEBUG_SERIAL
@@ -47,15 +48,11 @@
 #define DBG(x)
 #endif
 
-#define MAX_DEVICES 15  /* FIXME: is there another constant we can use instead? */
-extern int traps_enabled_device[MAX_DEVICES]; /* FIXME */
-
 /* Warning: these are only valid for the VIC20, C64 and C128, but *not* for
    the PET.  (FIXME?)  */
 #define BSOUR 0x95 /* Buffered Character for IEEE Bus */
 
-/* FIXME: code here assumes 4 bits for device number; should be 5? */
-#define DEVNR_MASK      0x0F    /* should be 0x1F */
+#define DEVNR_MASK      0x1F
 #define SA_MASK         0x0F
 
 /* bits 7=0 6,5 dev=4,3,2,1,0 */
@@ -100,13 +97,20 @@ static uint8_t serial_get_st(void)
     return mem_read((uint16_t)0x90);
 }
 
+/* LISTEN and TALK take bits 7-5 since the unit has five bits, the
+   secondary commands (SECOND, CLOSE, OPEN) take bits 7-4 */
+static uint8_t iec_command(uint8_t iecdata)
+{
+    return (iecdata < SECONDARY) ? (iecdata & 0xe0) : (iecdata & 0xf0);
+}
+
 /*
  * Send LISTEN/TALK and the secondary address.
  */
 static void send_listen_talk_secondary(uint8_t b)
 {
     TrapSecondary = b;
-    switch (TrapDevice & 0xf0) {
+    switch (iec_command(TrapDevice)) {
         case LISTEN:
             serial_iec_bus_listen(TrapDevice, TrapSecondary, serial_set_st);
             break;
@@ -119,9 +123,14 @@ static void send_listen_talk_secondary(uint8_t b)
 /* FIXME: the printers are strange */
 static int device_uses_serial_traps(int device)
 {
-    if ((device < 4) || (device > 11) || /* only devices 4 to 11 can use traps */
-        !traps_enabled_device[device] ||
-        (serial_truedrive[device] && !IS_PRINTER(device))) {
+    if ((device < 4) || (device >= TRAPS_MAX_DEVICES) || !traps_enabled_device[device]) {
+        return 0;
+    }
+    /* above the drives there is no true drive emulation, only real devices */
+    if (device > 11) {
+        return serial_device_type_get(device) == SERIAL_DEVICE_REAL;
+    }
+    if (serial_truedrive[device] && !IS_PRINTER(device)) {
         return 0;
     }
     return 1;
@@ -139,9 +148,9 @@ int serial_trap_attention(void)
     if ((iecdata == UNLISTEN) || (iecdata == UNTALK)) {
         /* transfer ends */
         DBG(("serial_trap_attention unlisten/untalk for device %d", ActiveDevice));
-    } else if (((iecdata & 0xf0) == OPEN) || ((iecdata & 0xf0) == CLOSE)) {
+    } else if ((iec_command(iecdata) == OPEN) || (iec_command(iecdata) == CLOSE)) {
         DBG(("serial_trap_attention open/close for device %d", ActiveDevice));
-    } else if (((iecdata & 0xf0) == LISTEN) || ((iecdata & 0xf0) == TALK)) {
+    } else if ((iec_command(iecdata) == LISTEN) || (iec_command(iecdata) == TALK)) {
         ActiveDevice = iecdata & DEVNR_MASK;
         DBG(("serial_trap_attention listen/talk for device %d", ActiveDevice));
     }
@@ -166,7 +175,7 @@ int serial_trap_attention(void)
         serial_iec_bus_untalk(TrapDevice, TrapSecondary, serial_set_st);
         ActiveDevice = 0;
     } else {
-        switch (iecdata & 0xf0) {
+        switch (iec_command(iecdata)) {
             case LISTEN:
             case TALK:
                 TrapDevice = iecdata;
@@ -298,12 +307,18 @@ int serial_trap_ready(void)
    referenced by PET and CBM2 anymore. */
 int serial_resources_init(void)
 {
-    return serial_iec_device_resources_init();
+    if (serial_iec_device_resources_init() < 0) {
+        return -1;
+    }
+    return serial_realdevice_resources_init();
 }
 
 int serial_cmdline_options_init(void)
 {
-    return serial_iec_device_cmdline_options_init();
+    if (serial_iec_device_cmdline_options_init() < 0) {
+        return -1;
+    }
+    return serial_realdevice_cmdline_options_init();
 }
 
 void serial_trap_init(uint16_t tmpin)

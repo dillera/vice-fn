@@ -37,6 +37,10 @@
 /*       6510core.c and 6510dtvcore.c too!      */
 #define TRAP_OPCODE 0x02
 
+/* traps keep an enable flag for each unit 0-30 */
+#define TRAPS_MAX_DEVICES 31
+extern int traps_enabled_device[TRAPS_MAX_DEVICES];
+
 typedef struct trap_s {
     const char *name;
     uint16_t address;
@@ -52,6 +56,7 @@ int traps_ready(void);
 void traps_shutdown(void);
 int traps_resources_init(void);
 int traps_cmdline_options_init(void);
+int traps_device_enable(unsigned int unit, int enable);
 int traps_add(const trap_t *trap);
 int traps_remove(const trap_t *trap);
 int traps_refresh(void);
