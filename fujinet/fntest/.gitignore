@@ -1,0 +1,7 @@
+# Local to each machine: run output, the release test programs, logs, and
+# copies of the user's fnconfig.ini
+runs/
+prg/
+*.log
+*.ini
+last-run*.txt

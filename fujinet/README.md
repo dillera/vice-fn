@@ -45,6 +45,13 @@ then load with `LOAD"*",8`:
 
     FUJINET_UNITS="8 16 29 30" fujinet/run-vice-fujinet.sh
 
+## Tests
+
+`fntest/run-fntests.sh` runs fujinet-lib's C64 test programs in a running VICE
+(remote monitor on port 6510) against FujiNet-PC, and logs each result in
+`fntest/results.md`. `fntest/STATUS.md` tracks why each failing test fails and
+what has been fixed.
+
 ## Release
 
 `release/` builds `VICE-FN_AppleSilicon`, a signed and notarized folder with
