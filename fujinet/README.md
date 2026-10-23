@@ -45,6 +45,12 @@ then load with `LOAD"*",8`:
 
     FUJINET_UNITS="8 16 29 30" fujinet/run-vice-fujinet.sh
 
+## Release
+
+`release/` builds `VICE-FN_AppleSilicon`, a signed and notarized folder with
+VICE, FujiNet-PC and a start app for Apple silicon Macs; see
+[release/README.md](release/README.md).
+
 ## Limits
 
 - Only the standard IEC protocol: no JiffyDOS or other fast loaders, and no
