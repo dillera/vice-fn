@@ -1,0 +1,4 @@
+libopencbm.dylib
+libopencbm.so
+netiecctl
+*.dSYM
