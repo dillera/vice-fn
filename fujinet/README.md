@@ -39,9 +39,16 @@ Then, on the C64, fujinet-lib programs work as on hardware, and with unit 12
 handed over, `LOAD"CONFIG.PRG",12` and `RUN` start the FujiNet CONFIG program
 from FujiNet-PC's flash directory.
 
+To boot from FujiNet as drive 8, hand over unit 8 too; the launcher removes
+VICE's own drive 8 for it. Disk images and programs mounted from TNFS hosts
+then load with `LOAD"*",8`:
+
+    FUJINET_UNITS="8 16 29 30" fujinet/run-vice-fujinet.sh
+
 ## Limits
 
 - Only the standard IEC protocol: no JiffyDOS or other fast loaders, and no
   line-level IEC device for units above 11.
-- Disk images that FujiNet-PC mounts from a TNFS host are not yet readable by
-  its drives; the flash directory is.
+- Programs built with fujinet-lib before the firmware's FujiIECPacket and unified
+  N: device (#1541, #1624) speak the old text protocol to device 16 and fail
+  their network calls against current FujiNet-PC, as they would on hardware.
