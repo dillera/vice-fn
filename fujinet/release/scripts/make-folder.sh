@@ -3,11 +3,17 @@
 # the Developer ID, and check the signatures.
 #
 #   RELEASE_DIR      downloads, builds and output (default: ~/code/vice-fn/release)
-#   OUT              where the folder goes (default: $RELEASE_DIR/out)
+#   VERSION          the release's version (default: the one in ../VERSION)
+#   OUT              where the folder goes (default: $RELEASE_DIR/out/v<version>)
 #   FIRMWARE_PKG     the fujinet-firmware checkout build-fujinet-pc.sh built
-#                    (default: ~/code/fujinet-firmware-pkg)
+#                    (default: ~/code/fujinet-firmware-pkg); it must have no
+#                    uncommitted changes, so the read me can name its commit
+#   PUBLISHED        the branch of both repositories that is on GitHub; the
+#                    folder carries later commits as patches in source/
+#                    (default: origin/vice-fn)
 #   CONFIG_PRG       the C64 CONFIG program FujiNet-PC serves (default: the
 #                    fujinet-config build in ~/code/vice-fn/fujinet-config)
+#   CONFIG_SOURCE    where CONFIG_PRG's source is, for the read me
 #   SIGN_IDENTITY    certificate hash or name (default: Developer ID
 #                    Application: DILLER & ASSOC LLC (YBX2V97SYB))
 #   LAUNCHER_CFLAGS  extra flags for the start app, e.g. other ports for a test
@@ -17,15 +23,22 @@ set -e
 SRC=$(cd "$(dirname "$0")/.." && pwd)
 SVN=$(cd "$SRC/../.." && pwd)
 R=${RELEASE_DIR:-$HOME/code/vice-fn/release}
-OUT=${OUT:-$R/out}
+VERSION=${VERSION:-$(cat "$SRC/VERSION")}
+OUT=${OUT:-$R/out/v$VERSION}
 FW=$(cd "${FIRMWARE_PKG:-$HOME/code/fujinet-firmware-pkg}" && pwd)
+PUBLISHED=${PUBLISHED:-origin/vice-fn}
 CONFIG_PRG=${CONFIG_PRG:-$HOME/code/vice-fn/fujinet-config/r2r/c64/config.prg}
+CONFIG_SOURCE=${CONFIG_SOURCE:-https://github.com/FujiNetWIFI/fujinet-config/pull/322}
 IDENTITY=${SIGN_IDENTITY:-07F262C687B818C2CA8586C2B9444E95FDC507BC}
 NAME=VICE-FN_AppleSilicon
 F=$OUT/$NAME
 APP="$F/Start VICE-FN.app"
-VERSION=$(date +%Y.%m.%d)
 WORK=$R/work
+
+if ! git -C "$FW" diff --quiet HEAD; then
+    echo "$FW has uncommitted changes; commit them, so the read me can name the source" >&2
+    exit 1
+fi
 
 rm -rf "$F"
 mkdir -p "$F/VICE/data" "$F/FujiNet-PC" "$F/source/licenses"
@@ -54,9 +67,25 @@ clang -O2 -arch arm64 -mmacosx-version-min=13.0 -Wall -Wextra $LAUNCHER_CFLAGS \
 sed "s/@VERSION@/$VERSION/" "$SRC/launcher/Info.plist" > "$APP/Contents/Info.plist"
 cp "$SRC/icon/AppIcon.icns" "$APP/Contents/Resources/"
 
-# Read me, sources of what isn't on GitHub, licenses
-cp "$SRC/launcher/README.txt" "$F/"
-git -C "$FW" diff HEAD > "$F/source/fujinet-firmware-local-fixes.patch"
+# Read me, release notes, sources of what isn't on GitHub, licenses
+SOURCE_DIR=$F/source
+# shellcheck source=sources.sh
+. "$SRC/scripts/sources.sh"
+VICE_HEAD=$(git -C "$SVN" log -1 --format=%h HEAD -- vice fujinet/opencbm-netiec)
+VICE_BASE=$(unpublished "$SVN" HEAD vice-fn-unpublished.patch vice fujinet/opencbm-netiec)
+FW_HEAD=$(git -C "$FW" rev-parse --short HEAD)
+FW_BASE=$(unpublished "$FW" HEAD fujinet-firmware-unpublished.patch)
+mkdir -p "$WORK"
+{
+    source_line VICE "$SVN" "$VICE_BASE" "$VICE_HEAD" vice-fn-unpublished.patch \
+        ", with the opencbm-netiec bridge in fujinet/opencbm-netiec"
+    source_line FujiNet-PC "$FW" "$FW_BASE" "$FW_HEAD" fujinet-firmware-unpublished.patch \
+        ", built with FUJINET_TARGET=IEC"
+    printf '  %-11s %s\n' CONFIG "$CONFIG_SOURCE"
+} >"$WORK/sources.txt"
+sed -e "s/@VERSION@/$VERSION/g" -e '/@SOURCES@/{' -e "r $WORK/sources.txt" -e 'd' -e '}' \
+    "$SRC/launcher/README.txt" >"$F/README.txt"
+cp "$SRC/CHANGES.txt" "$F/"
 cp "$SRC/launcher/start-vice-fn.c" "$F/source/"
 L=$F/source/licenses
 cp "$SVN/vice/COPYING" "$L/VICE-COPYING.txt"

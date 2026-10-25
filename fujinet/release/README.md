@@ -2,22 +2,45 @@
 
 Builds VICE with FujiNet-PC for Apple silicon Macs, as a signed folder, and for
 Debian and Ubuntu, as `.deb` packages (see [below](#debian-and-ubuntu-packages)).
+Both carry the version in `VERSION` (see [Versions](#versions)).
 
 ## Layout
 
 | Path | |
 |---|---|
+| `VERSION` | the version the next release builds, e.g. `1.1` |
+| `CHANGES.txt` | what changed in each version; both releases ship it |
 | `scripts/build-deps.sh` | builds SDL2, SDL2_image, Mbed TLS and OpenSSL as static libraries for macOS 13. Homebrew's own builds target the running macOS. The sources are pinned by version and SHA-256. |
 | `scripts/build-vice.sh` | builds `x64sc` from this checkout, and the bridge, against only system libraries and those static ones |
 | `scripts/build-fujinet-pc.sh` | builds a Release fujinet-pc from `FIRMWARE_PKG` |
 | `scripts/make-folder.sh` | assembles the folder, signs every binary and checks the signatures |
 | `scripts/notarize.sh` | notarizes the folder (as a zip) and a disk image of it, and staples both |
 | `scripts/make-icon.sh` | redraws `icon/AppIcon.icns`, VICE's C64 icon with the FujiNet logo, and the `.deb`'s icons in `icon/linux` |
+| `scripts/sources.sh` | shared by both releases: writes the commits that aren't on GitHub as patches, and the read me's source lines |
 | `launcher/` | the start app's source, `Info.plist` and read me, `x64sc`'s entitlements, and the shipped `fnconfig.ini` |
 | `linux/` | the `.deb` packages' build and test scripts, launcher and read me |
 
 Downloads, builds and output go to `RELEASE_DIR`, by default
-`~/code/vice-fn/release`, outside the repository.
+`~/code/vice-fn/release`, outside the repository. Each version's files go to
+`$RELEASE_DIR/out/v<version>`.
+
+## Versions
+
+`VERSION` holds the version, and the scripts take it from there; the `VERSION`
+variable overrides it for a test build. A release is named for it:
+- `VICE-FN_AppleSilicon_v<version>.zip` and `.dmg`. The folder inside keeps its
+  name, and the start app's `CFBundleShortVersionString` is the version.
+- `vice-fujinet_<version>_<release>_<arch>.deb`, whose package version is
+  `<version>-1~<release>`.
+
+Both read mes show the version, and both releases include `CHANGES.txt`.
+
+To make a release:
+1. Commit everything it should include, in this repository and in the firmware.
+   Both releases are built from commits; commits that aren't on GitHub yet go
+   into the release's `source/` as patches.
+2. Set `VERSION`, and add the version's notes at the top of `CHANGES.txt`.
+3. Build both (below).
 
 ## Apple silicon
 
@@ -47,14 +70,17 @@ Then:
     fujinet/release/scripts/make-folder.sh
     NOTARY_PROFILE=VICE-FN fujinet/release/scripts/notarize.sh
 
-The output is `$RELEASE_DIR/out/VICE-FN_AppleSilicon` and its `.zip` and `.dmg`.
+The output is in `$RELEASE_DIR/out/v<version>`: the folder
+`VICE-FN_AppleSilicon`, and `VICE-FN_AppleSilicon_v<version>.zip` and `.dmg`.
 
 ### Inputs
 
 - **`FIRMWARE_PKG`** (default `~/code/fujinet-firmware-pkg`): the fujinet-firmware
   checkout to build. A git worktree of the tested commit keeps the release apart
-  from ongoing work. Its uncommitted changes go into the folder as
-  `source/fujinet-firmware-local-fixes.patch`.
+  from ongoing work. It must have no uncommitted changes. Its commits after
+  `PUBLISHED` (default `origin/vice-fn`) go into the folder as
+  `source/fujinet-firmware-unpublished.patch`, and this repository's, for VICE
+  and the bridge, as `source/vice-fn-unpublished.patch`.
 - **`FIRMWARE_DIR`** (default `~/code/fujinet-firmware`): a checkout with a built
   `build/.venv`. The fujinet-pc build's Python steps run from it.
 - **`CONFIG_PRG`**: the C64 CONFIG program FujiNet-PC serves on drive 8.
@@ -101,7 +127,8 @@ launcher. The listing's screenshot goes next to the `.deb`.
     DOCKER_CONTEXT=colima-vice-fujinet fujinet/release/linux/build-debs.sh [target...]
 
 A target is `<distro><release>-<arch>`, such as `ubuntu24.04-amd64` or
-`debian13-arm64`. The output, with `SHA256SUMS`, is in `$RELEASE_DIR/out`. The
+`debian13-arm64`. The output, with `SHA256SUMS`, is in
+`$RELEASE_DIR/out/v<version>`. The
 build stops if the targets' screenshots differ, as they did while an
 x86-64-only bug garbled FujiNet-PC's directory text.
 
@@ -109,7 +136,7 @@ To run fujinet-lib's C64 tests against a package, each in a fresh container
 with the package's settings, and log them in `fntest/results.md`:
 
     DOCKER_CONTEXT=colima-vice-fujinet PRG_DIR=<test PRGs> \
-        fujinet/release/linux/fntest-deb.sh $RELEASE_DIR/out/<package>.deb [test...]
+        fujinet/release/linux/fntest-deb.sh $RELEASE_DIR/out/v<version>/<package>.deb [test...]
 
 ### Inputs
 
@@ -119,7 +146,7 @@ with the package's settings, and log them in `fntest/results.md`:
   and `vice-fn`): the firmware commit to build.
 - **`PUBLISHED`** (default `origin/vice-fn`): the branch on GitHub. Commits after
   it go into the package as patches in `source/`.
-- **`CONFIG_PRG`**, as for the Mac folder, and **`VERSION`** (default `1.0`).
+- **`CONFIG_PRG`**, as for the Mac folder, and **`VERSION`** (default: `VERSION`).
 
 ### Notes
 

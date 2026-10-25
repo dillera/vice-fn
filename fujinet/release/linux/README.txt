@@ -1,19 +1,26 @@
 VICE FujiNet for Debian and Ubuntu
 ==================================
 
+Version @VERSION@. CHANGES.txt, next to this file, lists what changed in each
+version.
+
 VICE, the Commodore 64 emulator, with FujiNet-PC on its serial bus. The
 emulated C64 gets FujiNet: CONFIG, disk images and programs from TNFS servers,
 network apps, and the clock.
 
 Each .deb is built for one distribution release and architecture, which its
-file name gives, e.g. vice-fujinet_1.0_ubuntu24.04_amd64.deb.
+file name gives, e.g. vice-fujinet_@VERSION@_ubuntu24.04_amd64.deb.
 
 
 Getting started
 ---------------
 1. Install the package; apt fetches the libraries it needs:
 
-       sudo apt install ./vice-fujinet_1.0_ubuntu24.04_amd64.deb
+       sudo apt install ./vice-fujinet_@VERSION@_ubuntu24.04_amd64.deb
+
+   A newer version installs the same way, over the old one. Each user's
+   FujiNet-PC settings and SD card stay as they are; CONFIG and FujiNet-PC's
+   web page are updated.
 
 2. Start "VICE FujiNet" from your desktop's menu, or run vice-fujinet in a
    terminal. It starts FujiNet-PC, then VICE. When you quit VICE, FujiNet-PC

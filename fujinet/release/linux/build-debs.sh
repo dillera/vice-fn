@@ -10,8 +10,9 @@
 #   debian13-arm64. The default is Ubuntu 24.04 and Debian 13, amd64 and arm64.
 #
 #   RELEASE_DIR     work and output (default: ~/code/vice-fn/release); the
-#                   .debs and their smoke-test screenshots go to $RELEASE_DIR/out
-#   VERSION         package version (default: 1.0)
+#                   .debs and their smoke-test screenshots go to
+#                   $RELEASE_DIR/out/v<version>
+#   VERSION         package version (default: the one in ../VERSION)
 #   VICE_REF        the commit of this repository to take VICE and the bridge
 #                   from (default: HEAD)
 #   FIRMWARE_DIR    fujinet-firmware checkout (default: ~/code/fujinet-firmware)
@@ -35,10 +36,10 @@ HERE=$(cd "$(dirname "$0")" && pwd)
 SRC=$(cd "$HERE/.." && pwd)
 SVN=$(cd "$SRC/../.." && pwd)
 R=${RELEASE_DIR:-$HOME/code/vice-fn/release}
-OUT=${OUT:-$R/out}
+VERSION=${VERSION:-$(cat "$SRC/VERSION")}
+OUT=${OUT:-$R/out/v$VERSION}
 W=$R/linux
 P=$W/in/pkg
-VERSION=${VERSION:-1.0}
 VICE_REF=${VICE_REF:-HEAD}
 FW=$(cd "${FIRMWARE_DIR:-$HOME/code/fujinet-firmware}" && pwd)
 FW_REF=${FIRMWARE_REF:-vice-fn}
@@ -48,34 +49,9 @@ CONFIG_SOURCE=${CONFIG_SOURCE:-https://github.com/FujiNetWIFI/fujinet-config/pul
 MAINTAINER=${MAINTAINER:-"$(git -C "$SVN" config user.name) <$(git -C "$SVN" config user.email)>"}
 TARGETS=${*:-ubuntu24.04-amd64 ubuntu24.04-arm64 debian13-amd64 debian13-arm64}
 
-# The GitHub page of a repository's origin
-github() {
-    git -C "$1" remote get-url origin | sed -e 's#^git@github.com:#https://github.com/#' -e 's#\.git$##'
-}
-
-# Writes the commits of <repo> up to <ref> that aren't on GitHub, if any touch
-# [paths...], to source/<patch>, and prints the last published commit.
-#   unpublished <repo> <ref> <patch> [paths...]
-unpublished() {
-    local repo=$1 ref=$2 patch=$3 base
-    shift 3
-    base=$(git -C "$repo" merge-base "$ref" "$PUBLISHED")
-    if [ -n "$(git -C "$repo" rev-list "$base..$ref" -- "$@")" ]; then
-        git -C "$repo" format-patch --stdout "$base..$ref" -- "$@" >"$P/source/$patch"
-    fi
-    git -C "$repo" rev-parse --short "$base"
-}
-
-# One source line of the README: where it is, and the patch on top if any
-#   source_line <name> <repo> <base> <head> <patch> <how>
-source_line() {
-    local plus=""
-    if [ -f "$P/source/$5" ]; then
-        plus=", plus source/$5 (up to $4)"
-    fi
-    printf '  %-11s %s, branch %s,\n' "$1" "$(github "$2")" "${PUBLISHED#*/}"
-    printf 'commit %s%s%s\n' "$3" "$plus" "$6" | fold -s -w 62 | sed -e 's/ *$//' -e 's/^/              /'
-}
+SOURCE_DIR=$P/source
+# shellcheck source=../scripts/sources.sh
+. "$SRC/scripts/sources.sh"
 
 echo "=== Sources"
 rm -rf "$W/in"
@@ -106,9 +82,9 @@ if [ -f "$P/source/vice-fn-unpublished.patch" ]; then
 fi
 echo "VICE_COMMIT=$VICE_COMMIT" >"$P/build-info"
 
-cp "$HERE"/{vice-fujinet,vice-fujinet.desktop,README.txt,copyright} "$P/"
+cp "$HERE"/{vice-fujinet,vice-fujinet.desktop,README.txt,copyright} "$SRC/CHANGES.txt" "$P/"
 cp "$HERE"/{build-in-container.sh,test-in-container.sh} "$P/"
-cp "$HERE"/* "$P/source/packaging/"
+cp "$HERE"/* "$SRC/VERSION" "$SRC/scripts/sources.sh" "$P/source/packaging/"
 cp "$SRC"/icon/linux/vice-fujinet-*.png "$P/icons/"
 cp "$CONFIG_PRG" "$P/config.prg"
 cp "$SRC/launcher/fnconfig.ini" "$P/fnconfig.ini"

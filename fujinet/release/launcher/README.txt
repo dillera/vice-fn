@@ -1,6 +1,8 @@
 VICE-FN for Apple silicon Macs
 ==============================
 
+Version @VERSION@. CHANGES.txt lists what changed in each version.
+
 VICE, the Commodore 64 emulator, with FujiNet-PC on its serial bus. The
 emulated C64 gets FujiNet: CONFIG, disk images and programs from TNFS servers,
 network apps, and the clock.
@@ -14,6 +16,9 @@ Getting started
 1. Copy the VICE-FN_AppleSilicon folder to a place you can write to, such as
    your Applications folder or your home folder. FujiNet-PC keeps its settings
    and its SD card in the folder, so it can't run from the disk image.
+
+   Upgrading: to keep your settings and SD card, copy fnconfig.ini and SD
+   from the old folder's FujiNet-PC into the new one's.
 
 2. Double-click "Start VICE-FN". It starts FujiNet-PC, then VICE. When you
    quit VICE, FujiNet-PC stops too.
@@ -43,6 +48,7 @@ VICE's own drives 9-11 still work as usual.
 What's in the folder
 --------------------
 Start VICE-FN.app        starts FujiNet-PC and VICE
+CHANGES.txt              what changed in each version
 VICE/x64sc               VICE 3.10 (SDL2 build) with FujiNet support
 VICE/libopencbm.dylib    the bridge VICE uses to reach FujiNet-PC, over
                          NetIEC on this Mac's TCP port 1541
@@ -77,13 +83,7 @@ Source and licenses
 -------------------
 VICE is GPL 2 and the FujiNet firmware GPL 3. This build comes from:
 
-  VICE        https://github.com/dillera/vice-fn, branch vice-fn,
-              commit 083eee8309 (with the opencbm-netiec bridge in
-              fujinet/opencbm-netiec)
-  FujiNet-PC  https://github.com/dillera/fujinet-firmware, branch vice-fn,
-              commit b80e8728, plus source/fujinet-firmware-local-fixes.patch,
-              built with FUJINET_TARGET=IEC
-  CONFIG      https://github.com/FujiNetWIFI/fujinet-config/pull/322
+@SOURCES@
 
 The scripts that build, sign and notarize this folder are in fujinet/release
 in the vice-fn repository.

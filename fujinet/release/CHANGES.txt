@@ -1,0 +1,21 @@
+VICE-FN release notes
+=====================
+
+1.1 (2026-10-25)
+----------------
+- Telnet sessions end when the server closes them. Terminal programs such as
+  CaTer used to print old data over and over after you logged out.
+- Mac: FujiNet-PC now has the fixes the Linux packages already had in 1.0:
+  - the clock: setting the time zone from the C64, and every time format;
+  - N: paths typed on the C64 in CD, PWD and the file commands (rename,
+    delete, mkdir and the rest), and generated GUIDs;
+  - NEW DISK makes disk images.
+- The release files are named with their version:
+  VICE-FN_AppleSilicon_v1.1.zip and .dmg, and
+  vice-fujinet_1.1_<release>_<arch>.deb.
+
+1.0 (2026-10-23)
+----------------
+- First release: VICE-FN_AppleSilicon for Apple silicon Macs, signed and
+  notarized, and vice-fujinet packages for Ubuntu 24.04 and Debian 13 on
+  amd64 and arm64.

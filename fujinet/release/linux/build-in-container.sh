@@ -3,7 +3,7 @@
 # it is for; build-debs.sh runs it. Reads /in (the sources and pkg/, this
 # directory's files) and writes /out/$DEB.
 #
-#   VERSION     package version, e.g. 1.0
+#   VERSION     package version, e.g. 1.1
 #   DISTRO      the release the package is for, e.g. ubuntu24.04
 #   DEB         the .deb's file name
 #   MAINTAINER  the package's Maintainer field
@@ -103,8 +103,10 @@ done
 
 DOC=$ROOT/usr/share/doc/vice-fujinet
 install -d $DOC/licenses
-sed -e "s/@VICE_VERSION@/$VICE_VERSION/" -e "s/@MBEDTLS_VERSION@/$MBEDTLS_VERSION/" \
+sed -e "s/@VERSION@/$VERSION/g" -e "s/@VICE_VERSION@/$VICE_VERSION/" \
+    -e "s/@MBEDTLS_VERSION@/$MBEDTLS_VERSION/" \
     -e '/@SOURCES@/{' -e "r $PKG/sources.txt" -e 'd' -e '}' $PKG/README.txt >$DOC/README.txt
+cp $PKG/CHANGES.txt $DOC/CHANGES.txt
 cp $PKG/copyright $DOC/copyright
 cp -R $PKG/source $DOC/source
 cp $B/vice-fn/vice/COPYING $DOC/licenses/VICE-COPYING.txt

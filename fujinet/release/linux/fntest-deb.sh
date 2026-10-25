@@ -23,7 +23,7 @@ fi
 DEB_DIR=$(cd "$(dirname "$1")" && pwd)
 DEB=$(basename "$1")
 shift
-NAME=${DEB%.deb}         # vice-fujinet_1.0_ubuntu24.04_amd64
+NAME=${DEB%.deb}         # vice-fujinet_1.1_ubuntu24.04_amd64
 ARCH=${NAME##*_}
 DISTRO=${NAME%_*}
 DISTRO=${DISTRO##*_}
