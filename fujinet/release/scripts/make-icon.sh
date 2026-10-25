@@ -1,7 +1,7 @@
 #!/bin/bash
-# Make icon/AppIcon.icns, the start app's icon: VICE's C64 icon with the
-# FujiNet logo in its lower band. Needs rsvg-convert and ImageMagick
-# (brew install librsvg imagemagick).
+# Make icon/AppIcon.icns, the start app's icon, and icon/linux/*.png, the
+# .deb's desktop icons: VICE's C64 icon with the FujiNet logo in its lower
+# band. Needs rsvg-convert and ImageMagick (brew install librsvg imagemagick).
 #
 #   FUJINET_LOGO  the FujiNet logo SVG (default: the one in ~/code/fujinet-firmware)
 set -e
@@ -26,4 +26,10 @@ for s in 16 32 128 256 512; do
     magick "$T/icon.png" -resize $((s * 2))x$((s * 2)) "$T/AppIcon.iconset/icon_${s}x${s}@2x.png"
 done
 iconutil -c icns "$T/AppIcon.iconset" -o "$SRC/icon/AppIcon.icns"
-echo "=== Done: $SRC/icon/AppIcon.icns"
+
+# Linux desktops show the artwork without the margin
+mkdir -p "$SRC/icon/linux"
+for s in 32 48 64 128 256 512; do
+    magick "$T/icon-1024.png" -resize ${s}x${s} -strip "$SRC/icon/linux/vice-fujinet-$s.png"
+done
+echo "=== Done: $SRC/icon/AppIcon.icns and $SRC/icon/linux"

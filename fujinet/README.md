@@ -55,8 +55,8 @@ what has been fixed.
 ## Release
 
 `release/` builds `VICE-FN_AppleSilicon`, a signed and notarized folder with
-VICE, FujiNet-PC and a start app for Apple silicon Macs; see
-[release/README.md](release/README.md).
+VICE, FujiNet-PC and a start app for Apple silicon Macs, and `vice-fujinet`
+`.deb` packages for Debian and Ubuntu; see [release/README.md](release/README.md).
 
 ## Limits
 

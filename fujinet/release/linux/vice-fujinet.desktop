@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=VICE FujiNet
+GenericName=Commodore 64 Emulator
+Comment=The VICE C64 emulator with FujiNet-PC on its serial bus
+Exec=vice-fujinet
+Icon=vice-fujinet
+Terminal=false
+Categories=Game;Emulator;
+Keywords=C64;Commodore;FujiNet;VICE;

@@ -1,0 +1,28 @@
+vice-fujinet: VICE with FujiNet-PC on its serial bus.
+
+VICE: /opt/vice-fujinet/bin/x64sc, /opt/vice-fujinet/share/vice
+  Copyright the VICE team; https://vice-emu.sourceforge.io/
+  With the changes in https://github.com/dillera/vice-fn
+  License: GPL-2+, in /usr/share/common-licenses/GPL-2
+
+The NetIEC bridge: /opt/vice-fujinet/lib/libopencbm.so
+  From fujinet/opencbm-netiec in https://github.com/dillera/vice-fn
+  License: GPL-2+, as VICE
+
+FujiNet-PC: /opt/vice-fujinet/fujinet-pc
+  Copyright the FujiNet contributors;
+  https://github.com/FujiNetWIFI/fujinet-firmware
+  With the changes in https://github.com/dillera/fujinet-firmware
+  License: GPL-3, in /usr/share/common-licenses/GPL-3
+  It includes cJSON, libnfs, libsmb2, libssh, miniaudio, mongoose and
+  Mbed TLS, whose licenses are in /usr/share/doc/vice-fujinet/licenses, and
+  Gumbo, under the Apache License 2.0 in
+  /usr/share/common-licenses/Apache-2.0.
+
+CONFIG: /opt/vice-fujinet/fujinet-pc/data/config.prg
+  https://github.com/FujiNetWIFI/fujinet-config
+  License: GPL-3, in /usr/share/common-licenses/GPL-3
+
+The vice-fujinet launcher and packaging: /usr/bin/vice-fujinet
+  From fujinet/release/linux in https://github.com/dillera/vice-fn
+  License: GPL-2+, as VICE

@@ -1,0 +1,124 @@
+#!/bin/bash
+# vice-fujinet: start FujiNet-PC, then VICE with FujiNet on the serial bus,
+# and stop FujiNet-PC again when VICE quits.
+#
+#   vice-fujinet [VICE options...]
+#
+# Each user's FujiNet-PC runs in ~/.local/share/vice-fujinet/fujinet-pc
+# ($XDG_DATA_HOME), which holds its settings and SD card. A FujiNet-PC that is
+# already listening on the NetIEC port is used as it is.
+#
+#   NETIEC_PORT  FujiNet-PC's NetIEC port (default: 1541, as in fnconfig.ini)
+#   WEB_UI       where FujiNet-PC serves its web page
+#                (default: http://localhost:8064)
+
+APP=/opt/vice-fujinet
+NETIEC_PORT=${NETIEC_PORT:-1541}
+WEB_UI=${WEB_UI:-http://localhost:8064}
+STATE=${XDG_DATA_HOME:-$HOME/.local/share}/vice-fujinet
+FN=$STATE/fujinet-pc
+
+# Tell the user, in a dialog when not started from a terminal
+alert() {
+    echo "vice-fujinet: $*" >&2
+    [ -t 2 ] && return
+    if command -v zenity >/dev/null; then
+        zenity --error --title="VICE FujiNet" --text="$*" 2>/dev/null
+    elif command -v kdialog >/dev/null; then
+        kdialog --title "VICE FujiNet" --error "$*" 2>/dev/null
+    elif command -v notify-send >/dev/null; then
+        notify-send "VICE FujiNet" "$*"
+    fi
+}
+
+# Is something accepting connections on localhost:$1?
+port_open() {
+    (exec 3<>"/dev/tcp/127.0.0.1/$1") 2>/dev/null
+}
+
+# FujiNet-PC's settings and SD card are the user's and are copied once; CONFIG
+# and the web page (data) are copied again for each new version
+setup() {
+    mkdir -p "$FN" || return 1
+    [ -e "$FN/fnconfig.ini" ] || cp "$APP/fujinet-pc/fnconfig.ini" "$FN/" || return 1
+    [ -e "$FN/SD" ] || cp -R "$APP/fujinet-pc/SD" "$FN/" || return 1
+    if ! cmp -s "$APP/VERSION" "$FN/.data-version"; then
+        rm -rf "$FN/data" &&
+            cp -R "$APP/fujinet-pc/data" "$FN/" &&
+            cp "$APP/VERSION" "$FN/.data-version" || return 1
+    fi
+}
+
+# Run FujiNet-PC until it's stopped. It asks for a restart with exit code 75
+# (EX_TEMPFAIL), as in run-fujinet.
+run_fujinet() {
+    local pid rc
+    cd "$FN" || exit 1
+    trap 'kill "$pid" 2>/dev/null; wait "$pid"; exit 0' TERM
+    while :; do
+        "$APP/fujinet-pc/fujinet" -u "$WEB_UI" &
+        pid=$!
+        wait "$pid"
+        rc=$?
+        [ "$rc" -eq 75 ] || exit "$rc"
+    done
+}
+
+case "$1" in
+    -h|--help)
+        echo "usage: vice-fujinet [VICE options...]"
+        echo "Starts FujiNet-PC, then VICE (x64sc) with FujiNet on its serial bus."
+        echo "See /usr/share/doc/vice-fujinet/README.txt."
+        exit 0
+        ;;
+esac
+
+if [ ! -x "$APP/bin/x64sc" ] || [ ! -x "$APP/fujinet-pc/fujinet" ]; then
+    alert "$APP is incomplete. Reinstall the vice-fujinet package."
+    exit 1
+fi
+if ! setup; then
+    alert "FujiNet-PC's folder, $FN, couldn't be set up."
+    exit 1
+fi
+
+fujinet=
+if ! port_open "$NETIEC_PORT"; then
+    run_fujinet >"$FN/fujinet-pc.log" 2>&1 </dev/null &
+    fujinet=$!
+    # Catch a FujiNet-PC that quits at once, e.g. when its ports are taken,
+    # and give it a few seconds to start listening
+    for _ in $(seq 50); do
+        if ! kill -0 "$fujinet" 2>/dev/null; then
+            alert "FujiNet-PC stopped as soon as it started. Its log is $FN/fujinet-pc.log."
+            exit 1
+        fi
+        port_open "$NETIEC_PORT" && break
+        sleep 0.1
+    done
+fi
+
+# VICE with FujiNet as drive 8 and devices 16 (network), 29 (clock) and 30
+# (FujiNet), reached through the NetIEC bridge in $APP/lib. Its settings are
+# kept apart from any other VICE's.
+start=$SECONDS
+NETIEC_PORT=$NETIEC_PORT "$APP/bin/x64sc" -config "$STATE/vicerc" \
+    -drive8type 0 +drive8truedrive -devicebackend8 2 -trapdevice8 \
+    -realdevice16 -realdevice29 -realdevice30 "$@" >"$STATE/vice.log" 2>&1 &
+vice=$!
+trap 'kill "$vice" 2>/dev/null' TERM INT HUP
+while :; do
+    wait "$vice"
+    rc=$?
+    kill -0 "$vice" 2>/dev/null || break
+done
+trap - TERM INT HUP
+
+if [ -n "$fujinet" ]; then
+    kill "$fujinet" 2>/dev/null
+    wait "$fujinet" 2>/dev/null
+fi
+if [ "$rc" -ne 0 ] && [ $((SECONDS - start)) -lt 5 ]; then
+    alert "VICE stopped as soon as it started. Its log is $STATE/vice.log."
+fi
+exit "$rc"
