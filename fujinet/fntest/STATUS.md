@@ -416,9 +416,11 @@ Found on the way; no test fails on it, since none of the 14 lists an image:
 | 910fba672 `[iec] Create disk images with NEW DISK` | 9 |
 | ba14c0aa3 `[meatloaf] Fix the inverted null check in MFSOwner::NewFile` | 10 |
 | 0ccf63a01 `[utils] Format from a copy of the va_list in mstr::format` | 11 |
+| c8b401984 `[network-protocol] Read what a TELNET peer sent before it closed` | 12 |
 
 Each commit is one PR's worth. Fixes 10 and 11 came from building the Linux
-`.deb` (22:00); no fntest result depended on them on the Mac. The clock
+`.deb` (22:00), and fix 12 from trying CaTer's telnet on the C64 (2026-10-25);
+no fntest result depended on them on the Mac. The clock
 commit's unit test sits in the test file that commit 495e6be4a adds, so that PR
 needs it too.
 
@@ -474,6 +476,13 @@ conversions do nothing.
     arm64. On x86-64 Linux it garbled the disk name and ID of D64 and tape
     directory headers and the bytes-free line, and could crash. It now prints
     from a `va_copy`. New cases in `tests/UtilsTests.cpp` fail on x86-64 without it.
+12. `NetworkProtocolTELNET::read()` gave up as soon as the peer had closed, without
+    reading what it sent before closing, such as a shell's `logout`
+    (`lib/network-protocol/Telnet.cpp`). STATUS kept counting those bytes, so
+    CaTer polled forever and printed stale data. It now reads them first, as
+    `NetworkProtocolTCP::read()` does. New cases in `tests/TelnetProtocolTests.cpp`,
+    with a closed peer in `tests/tcp_harness`, fail without it. Upstream master has
+    the same code.
 
 Fix 9 works without the others and is its own PR. It edits files that fixes 1, 5 and 6
 touch too, on lines next to theirs: `iecFuji.h` and `iecFuji.cpp` (it drops the
