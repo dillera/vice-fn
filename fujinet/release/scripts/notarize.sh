@@ -48,7 +48,11 @@ ditto -c -k --keepParent "$F" "$ZIP"
 
 echo "=== Notarizing the disk image"
 rm -f "$DMG"
-hdiutil create -volname "VICE-FN v$VERSION" -srcfolder "$F" -format UDZO -ov "$DMG"
+# The disk image holds the folder itself, for people to copy out of it
+STAGE=$(mktemp -d)
+ditto "$F" "$STAGE/$NAME"
+hdiutil create -volname "VICE-FN v$VERSION" -srcfolder "$STAGE" -format UDZO -ov "$DMG"
+rm -rf "$STAGE"
 codesign --force --timestamp --sign "$IDENTITY" "$DMG"
 submit "$DMG"
 xcrun stapler staple "$DMG"
