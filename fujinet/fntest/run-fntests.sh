@@ -21,6 +21,8 @@
 #                 each restart and again at the end, so every test starts from
 #                 the same settings and none are left changed (the user's own:
 #                 fnconfig.golden.ini)
+#   FIRMWARE_LABEL  what the Firmware column says, instead of FIRMWARE_DIR's
+#                 branch and commit (release/linux/fntest-deb.sh names its .deb)
 
 here=$(cd "$(dirname "$0")" && pwd)
 prgdir=${PRG_DIR:-$here/prg/c64}
@@ -130,7 +132,7 @@ fi
 
 run=$(date +%Y-%m-%d_%H%M%S)
 when=$(date '+%Y-%m-%d %H:%M')
-fw=$(firmware_id)
+fw=${FIRMWARE_LABEL:-$(firmware_id)}
 out=$here/runs/$run
 mkdir -p "$out"
 
