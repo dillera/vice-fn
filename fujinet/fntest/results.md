@@ -124,3 +124,17 @@ the checks that ran. STATUS.md explains the failures.
 | 2026-10-23 17:28 | parserr | FAIL | 0 | 0 | 1 | bare NET_PARSE with no channel reports an error (line 94) | vice-fn b80e8728+76f914 | 31cea90* | runs/2026-10-23_172832 |
 | 2026-10-23 17:28 | qrcode | PASS | 22 | 0 | 0 |  | vice-fn b80e8728+76f914 | 31cea90* | runs/2026-10-23_172832 |
 | 2026-10-23 17:28 | wifi | PASS | 18 | 0 | 0 |  | vice-fn b80e8728+76f914 | 31cea90* | runs/2026-10-23_172832 |
+| 2026-10-23 22:02 | appkey | PASS | 18 | 0 | 0 |  | vice-fujinet_1.0_ubuntu24.04_amd64 | 31cea90* | runs/2026-10-23_220209 |
+| 2026-10-23 22:02 | clipbord | FAIL | 12 | 0 | 1 | write open on an older snippet fails (line 119) | vice-fujinet_1.0_ubuntu24.04_amd64 | 31cea90* | runs/2026-10-23_220220 |
+| 2026-10-23 22:02 | clock | PASS | 48 | 0 | 0 |  | vice-fujinet_1.0_ubuntu24.04_amd64 | 31cea90* | runs/2026-10-23_220232 |
+| 2026-10-23 22:02 | devlist | FAIL | 3 | 0 | 1 | Network 1 online (line 93) | vice-fujinet_1.0_ubuntu24.04_amd64 | 31cea90* | runs/2026-10-23_220249 |
+| 2026-10-23 22:03 | disk | FAIL | 17 | 0 | 1 | the new image is the size asked for (line 323) | vice-fujinet_1.0_ubuntu24.04_amd64 | 31cea90* | runs/2026-10-23_220301 |
+| 2026-10-23 22:03 | fujidev | FAIL | 17 | 0 | 1 | fuji_mount_host_slot with invalid host fails (line 138) | vice-fujinet_1.0_ubuntu24.04_amd64 | 31cea90* | runs/2026-10-23_220318 |
+| 2026-10-23 22:03 | html | PASS | 98 | 1 | 0 |  | vice-fujinet_1.0_ubuntu24.04_amd64 | 31cea90* | runs/2026-10-23_220330 |
+| 2026-10-23 22:03 | net5plus | FAIL | 2 | 0 | 1 | listener reports connection (line 395) | vice-fujinet_1.0_ubuntu24.04_amd64 | 31cea90* | runs/2026-10-23_220357 |
+| 2026-10-23 22:04 | netfile | FAIL | 10 | 0 | 1 | directory that was never created does not open (line 218) | vice-fujinet_1.0_ubuntu24.04_amd64 | 31cea90* | runs/2026-10-23_220409 |
+| 2026-10-23 22:04 | netproto | PASS | 107 | 0 | 0 |  | vice-fujinet_1.0_ubuntu24.04_amd64 | 31cea90* | runs/2026-10-23_220420 |
+| 2026-10-23 22:04 | network | FAIL | 21 | 1 | 1 | N1 DOES NOT have bytes waiting (line 270) | vice-fujinet_1.0_ubuntu24.04_amd64 | 31cea90* | runs/2026-10-23_220453 |
+| 2026-10-23 22:05 | parserr | FAIL | 0 | 0 | 1 | bare NET_PARSE with no channel reports an error (line 94) | vice-fujinet_1.0_ubuntu24.04_amd64 | 31cea90* | runs/2026-10-23_220504 |
+| 2026-10-23 22:05 | qrcode | PASS | 22 | 0 | 0 |  | vice-fujinet_1.0_ubuntu24.04_amd64 | 31cea90* | runs/2026-10-23_220516 |
+| 2026-10-23 22:05 | wifi | PASS | 18 | 0 | 0 |  | vice-fujinet_1.0_ubuntu24.04_amd64 | 31cea90* | runs/2026-10-23_220528 |
