@@ -52,6 +52,9 @@ then load with `LOAD"*",8`:
 `fntest/results.md`. `fntest/STATUS.md` tracks why each failing test fails and
 what has been fixed.
 
+`termserver/` is a telnet and SSH server in Docker to try terminal programs,
+such as CaTer, against; see [termserver/README.md](termserver/README.md).
+
 ## Release
 
 `release/` builds `VICE-FN_AppleSilicon`, a signed and notarized folder with
