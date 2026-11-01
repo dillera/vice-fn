@@ -73,6 +73,8 @@ log_row() {
     local some='=== Results: ([0-9]+) passed, ([0-9]+) skipped, ([0-9]+) failed'
     local fail='FAIL (.*) \(line ([0-9]+)\)'
     local tid='tests git commit ID ([0-9a-f]+\*?)'
+    # fujinet-lib 5.1 prints "lib: v5.1.1-dev  106a725" instead
+    local libid='lib: (v[^ ]+) ([0-9a-f]+\*?)'
 
     name=$(basename "$1" .txt)
     # Pad the lines back to 40 columns so joining them undoes the wrapping
@@ -87,7 +89,11 @@ log_row() {
         result="NO RESULT"
     fi
     [[ $flat =~ $fail ]] && first="${BASH_REMATCH[1]} (line ${BASH_REMATCH[2]})"
-    [[ $flat =~ $tid ]] && tests=${BASH_REMATCH[1]}
+    if [[ $flat =~ $tid ]]; then
+        tests=${BASH_REMATCH[1]}
+    elif [[ $flat =~ $libid ]]; then
+        tests="${BASH_REMATCH[2]} (${BASH_REMATCH[1]})"
+    fi
 
     if [ ! -f "$results" ]; then
         cat > "$results" <<'EOF'
