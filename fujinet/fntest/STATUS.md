@@ -33,6 +33,24 @@ Firmware is unchanged: `vice-fn` c8b401984 (fixes 1-12).
   74 (1 / 1), the same lines as before the fix.
 - `run-fntests.sh` reads the Tests column from the new footer
   (`lib: v5.1.1-dev  106a725`, from #234); the run was re-logged with it.
+- **Firmware rebased onto upstream master f703133d0 (12:30).** `vice-fn` is now
+  10 commits, e1909e84d..8f24d5afc: fix 12 was dropped, since it is upstream
+  as #2182 with the same `Telnet.cpp`. The old head is branch `vice-fn-v1.1`
+  (c8b401984, the v1.1 release source). The other 10 applied without conflicts,
+  and FujiNet-PC IEC builds (`v1.6-8f24d5afc`), with all 36 ctests passing.
+  Run `runs/2026-11-01_123105` and `_123432` give the same rows as before the
+  rebase: 5 of 14, plus clock 57 / 0 with the wait fix (PR #263).
+- **Clock's long wait needs headless VICE.** CLOCK checks a 10 s
+  `wait_jiffies()` against FujiNet's wall clock to +/- 0.05 s, so it measures
+  the emulator's speed too. With the wait fix, headless VICE (`build-headless`)
+  measures 10.03-10.04 s and passes. The windowed SDL2 build measures
+  10.06-10.07 s and fails line 350 (`runs/2026-11-01_123905` and the two runs
+  after it), against 2.99 s without the fix. These were ruled out: the runner's
+  screen polls (a run with no monitor access during the wait still gave
+  10.07 s) and sound sync (`+sound` made it worse, 10.09-10.13 s). Use
+  `VICE_BUILD=$PWD/build-headless` for CLOCK results.
+- fujinet-lib PRs: #263 (the wait fix) and #264 (106a725, the ASCII tests).
+  Issues: #261 (Atari, H89 and Model II `wait_jiffies`) and #262 (H).
 - Upstream also fixed Adam's version of cause A: firmware #2205 sets bit 0x20
   of the Fuji and network STATUS byte after a refused command, and lib #235
   polls it. That is a template for IEC, where `transaction_error()` is still a

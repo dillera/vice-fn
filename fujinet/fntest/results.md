@@ -164,3 +164,37 @@ the checks that ran. STATUS.md explains the failures.
 | 2026-11-01 11:49 | html | FAIL | 7 | 0 | 1 | decoded body equals ABC (line 91) | vice-fn c8b40198 | 310fe77* (v5.1.1-dev) | runs/2026-11-01_114939 |
 | 2026-11-01 11:49 | netproto | FAIL | 2 | 0 | 1 | 64 bytes match pattern (line 226) | vice-fn c8b40198 | 310fe77* (v5.1.1-dev) | runs/2026-11-01_114939 |
 | 2026-11-01 11:49 | disk | FAIL | 1 | 0 | 1 | SD host slot found (line 74) | vice-fn c8b40198 | 310fe77* (v5.1.1-dev) | runs/2026-11-01_114939 |
+| 2026-11-01 12:31 | appkey | PASS | 18 | 0 | 0 |  | vice-fn 8f24d5af | 106a725 (v5.1.1-dev) | runs/2026-11-01_123105 |
+| 2026-11-01 12:31 | clipbord | FAIL | 12 | 0 | 1 | write open on an older snippet fails (line 119) | vice-fn 8f24d5af | 106a725 (v5.1.1-dev) | runs/2026-11-01_123105 |
+| 2026-11-01 12:31 | clock | FAIL | 55 | 0 | 1 | long wait within tolerance (line 350) | vice-fn 8f24d5af | 106a725 (v5.1.1-dev) | runs/2026-11-01_123105 |
+| 2026-11-01 12:31 | devlist | FAIL | 3 | 0 | 1 | Network 1 online (line 96) | vice-fn 8f24d5af | 106a725 (v5.1.1-dev) | runs/2026-11-01_123105 |
+| 2026-11-01 12:31 | disk | FAIL | 18 | 0 | 1 | the new image is the size asked for (line 323) | vice-fn 8f24d5af | 106a725 (v5.1.1-dev) | runs/2026-11-01_123105 |
+| 2026-11-01 12:31 | fujidev | FAIL | 18 | 0 | 1 | fuji_mount_host_slot with invalid host fails (line 153) | vice-fn 8f24d5af | 106a725 (v5.1.1-dev) | runs/2026-11-01_123105 |
+| 2026-11-01 12:31 | html | PASS | 95 | 1 | 0 |  | vice-fn 8f24d5af | 106a725 (v5.1.1-dev) | runs/2026-11-01_123105 |
+| 2026-11-01 12:31 | net5plus | FAIL | 2 | 0 | 1 | listener reports connection (line 390) | vice-fn 8f24d5af | 106a725 (v5.1.1-dev) | runs/2026-11-01_123105 |
+| 2026-11-01 12:31 | netfile | FAIL | 10 | 0 | 1 | directory that was never created does not open (line 218) | vice-fn 8f24d5af | 106a725 (v5.1.1-dev) | runs/2026-11-01_123105 |
+| 2026-11-01 12:31 | netproto | PASS | 107 | 0 | 0 |  | vice-fn 8f24d5af | 106a725 (v5.1.1-dev) | runs/2026-11-01_123105 |
+| 2026-11-01 12:31 | network | FAIL | 33 | 1 | 1 | N1 DOES NOT have bytes waiting (line 322) | vice-fn 8f24d5af | 106a725 (v5.1.1-dev) | runs/2026-11-01_123105 |
+| 2026-11-01 12:31 | parserr | FAIL | 0 | 0 | 1 | bare NET_PARSE with no channel reports an error (line 94) | vice-fn 8f24d5af | 106a725 (v5.1.1-dev) | runs/2026-11-01_123105 |
+| 2026-11-01 12:31 | qrcode | PASS | 22 | 0 | 0 |  | vice-fn 8f24d5af | 106a725 (v5.1.1-dev) | runs/2026-11-01_123105 |
+| 2026-11-01 12:31 | wifi | PASS | 19 | 0 | 0 |  | vice-fn 8f24d5af | 106a725 (v5.1.1-dev) | runs/2026-11-01_123105 |
+| 2026-11-01 12:34 | clock | PASS | 57 | 0 | 0 |  | vice-fn 8f24d5af | 310fe77* (v5.1.1-dev) | runs/2026-11-01_123432 |
+| 2026-11-01 12:35 | appkey | PASS | 18 | 0 | 0 |  | vice-fn 8f24d5af | 106a725 (v5.1.1-dev) | runs/2026-11-01_123534 |
+| 2026-11-01 12:35 | clipbord | FAIL | 12 | 0 | 1 | write open on an older snippet fails (line 119) | vice-fn 8f24d5af | 106a725 (v5.1.1-dev) | runs/2026-11-01_123534 |
+| 2026-11-01 12:35 | clock | FAIL | 55 | 0 | 1 | long wait within tolerance (line 350) | vice-fn 8f24d5af | 106a725 (v5.1.1-dev) | runs/2026-11-01_123534 |
+| 2026-11-01 12:35 | devlist | FAIL | 3 | 0 | 1 | Network 1 online (line 96) | vice-fn 8f24d5af | 106a725 (v5.1.1-dev) | runs/2026-11-01_123534 |
+| 2026-11-01 12:35 | disk | FAIL | 18 | 0 | 1 | the new image is the size asked for (line 323) | vice-fn 8f24d5af | 106a725 (v5.1.1-dev) | runs/2026-11-01_123534 |
+| 2026-11-01 12:35 | fujidev | FAIL | 18 | 0 | 1 | fuji_mount_host_slot with invalid host fails (line 153) | vice-fn 8f24d5af | 106a725 (v5.1.1-dev) | runs/2026-11-01_123534 |
+| 2026-11-01 12:35 | html | PASS | 95 | 1 | 0 |  | vice-fn 8f24d5af | 106a725 (v5.1.1-dev) | runs/2026-11-01_123534 |
+| 2026-11-01 12:35 | net5plus | FAIL | 2 | 0 | 1 | listener reports connection (line 390) | vice-fn 8f24d5af | 106a725 (v5.1.1-dev) | runs/2026-11-01_123534 |
+| 2026-11-01 12:35 | netfile | FAIL | 10 | 0 | 1 | directory that was never created does not open (line 218) | vice-fn 8f24d5af | 106a725 (v5.1.1-dev) | runs/2026-11-01_123534 |
+| 2026-11-01 12:35 | netproto | PASS | 107 | 0 | 0 |  | vice-fn 8f24d5af | 106a725 (v5.1.1-dev) | runs/2026-11-01_123534 |
+| 2026-11-01 12:35 | network | FAIL | 33 | 1 | 1 | N1 DOES NOT have bytes waiting (line 322) | vice-fn 8f24d5af | 106a725 (v5.1.1-dev) | runs/2026-11-01_123534 |
+| 2026-11-01 12:35 | parserr | FAIL | 0 | 0 | 1 | bare NET_PARSE with no channel reports an error (line 94) | vice-fn 8f24d5af | 106a725 (v5.1.1-dev) | runs/2026-11-01_123534 |
+| 2026-11-01 12:35 | qrcode | PASS | 22 | 0 | 0 |  | vice-fn 8f24d5af | 106a725 (v5.1.1-dev) | runs/2026-11-01_123534 |
+| 2026-11-01 12:35 | wifi | PASS | 19 | 0 | 0 |  | vice-fn 8f24d5af | 106a725 (v5.1.1-dev) | runs/2026-11-01_123534 |
+| 2026-11-01 12:39 | clock | FAIL | 55 | 0 | 1 | long wait within tolerance (line 350) | vice-fn 8f24d5af | 310fe77* (v5.1.1-dev) | runs/2026-11-01_123905 |
+| 2026-11-01 12:40 | clock | FAIL | 55 | 0 | 1 | long wait within tolerance (line 350) | vice-fn 8f24d5af | 310fe77* (v5.1.1-dev) | runs/2026-11-01_124010 |
+| 2026-11-01 12:40 | clock | FAIL | 55 | 0 | 1 | long wait within tolerance (line 350) | vice-fn 8f24d5af | 310fe77* (v5.1.1-dev) | runs/2026-11-01_124037 |
+| 2026-11-01 12:42 | clock | FAIL | 55 | 0 | 1 | long wait within tolerance (line 350) | vice-fn 8f24d5af | 310fe77* (v5.1.1-dev) | runs/2026-11-01_124243 |
+| 2026-11-01 12:43 | clock | FAIL | 55 | 0 | 1 | long wait within tolerance (line 350) | vice-fn 8f24d5af | 310fe77* (v5.1.1-dev) | runs/2026-11-01_124310 |
