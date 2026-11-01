@@ -1,5 +1,43 @@
 # fntest status: C64 over IEC (VICE + fujinet-pc)
 
+## 2026-11-01: fujinet-lib 5.1
+
+fujinet-lib v5.1.0 was released 2026-10-31; `tests-latest` is now 310fe77
+(main, 5.1.1-dev). `c64-iec-fixes` is rebased onto it as one commit, 106a725
+(the ASCII test fix, now under `FUJI_PLATFORM_C64` instead of `__CBM__`, as
+the new CONTRIBUTING.md asks). The old branch is `c64-iec-fixes-pre-5.1`.
+Firmware is unchanged: `vice-fn` c8b401984 (fixes 1-12).
+
+- F (our 26d1a03, the 304-byte packet) is dropped: upstream #239 sends the
+  payload straight from the caller's buffer, the approach listed under F as
+  "not done". fujidev and disk still get past the checks F blocked.
+- Full run `runs/2026-11-01_114334`: **5 of 14 pass** (appkey, html,
+  netproto, qrcode, wifi). The other 8 stop on A, B and H, as before; only
+  the line numbers moved (devlist 96, fujidev 153 with 18 passed, net5plus 390,
+  network 322 with 33 passed, which includes #224's TCP and TELNET peer-close
+  checks).
+- **Clock is new red, a library bug: "long wait within tolerance" (line 350).**
+  #258 (merged 2026-11-01) made `wait_jiffies()` take 16 bits, but
+  `bus/c64/wait.c` still reads only the jiffy clock's low byte (`$A2`) into a
+  `uint16_t start`. When the byte wraps, `(uint16_t) (JIFFY_LOW - start)` is
+  about 65300, so any wait that spans a wrap (every 4.3 s) ends there: 10 s
+  measured 2.94 s. RichStephens pointed this out in #258's comments (with the
+  Atari's twin, which never returns past 255); nothing is open for it.
+  - Fix, uncommitted in worktree `~/code/vice-fn/fujinet-lib-c64-wait`
+    (branch `c64-wait-jiffies-wrap` off 310fe77): count the low byte's ticks
+    one at a time. +10 bytes of code. clock then passes 57 / 0 three runs in a
+    row (`runs/2026-11-01_114734`, `_114800`, `_114827`; long wait 10.04 s).
+    With it, 6 of 14 pass again.
+- E still needs 106a725 upstream: main's own tests (`runs/2026-11-01_114939`)
+  fail html at line 91 (7 / 1), netproto at line 226 (2 / 1) and disk at line
+  74 (1 / 1), the same lines as before the fix.
+- `run-fntests.sh` reads the Tests column from the new footer
+  (`lib: v5.1.1-dev  106a725`, from #234); the run was re-logged with it.
+- Upstream also fixed Adam's version of cause A: firmware #2205 sets bit 0x20
+  of the Fuji and network STATUS byte after a refused command, and lib #235
+  polls it. That is a template for IEC, where `transaction_error()` is still a
+  no-op on master.
+
 Updated 2026-10-23 22:10. **6 of 14 test programs pass**, on the Mac rig and in
 the vice-fujinet 1.0 `.deb` for Ubuntu 24.04 amd64 (see "Linux .deb" below).
 
